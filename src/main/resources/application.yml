@@ -5,7 +5,9 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/mapping
+    url: jdbc:mysql://mysqldb:3306/mapping
+    #configure the db name that is running in another machine
+   # url: jdbc:mysql://localhost:3306/mapping
     username: root
     password: Parshuram@1727
     

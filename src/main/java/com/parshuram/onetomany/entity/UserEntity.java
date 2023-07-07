@@ -17,6 +17,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString.Exclude;
 
 @Entity
 @Table(name = "User_Details")
@@ -40,6 +41,7 @@ public class UserEntity {
 	
 	@OneToMany(mappedBy = "userEntity",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
 	@JsonIgnore
+	@Exclude
 	private List<PolicyEntity> policyEntity;
 
 	public UserEntity(Integer id, String firstName, String lastName, String city, String mobileNumber, String state) {

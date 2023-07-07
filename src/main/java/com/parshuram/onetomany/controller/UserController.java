@@ -22,8 +22,11 @@ import com.parshuram.onetomany.entity.UserEntity;
 import com.parshuram.onetomany.service.UserService;
 import com.parshuram.onetomany.utils.ApiResponse;
 
+import lombok.extern.slf4j.Slf4j;
+
 @RestController
 @RequestMapping("/user")
+@Slf4j
 public class UserController {
 
 	@Autowired
@@ -32,25 +35,46 @@ public class UserController {
 	@PostMapping("/")
 	public ResponseEntity<UserEntity> createUser(@Valid @RequestBody UserDto userDto) {
 		//ok
-		return new ResponseEntity<>(userService.createUser(userDto), HttpStatus.CREATED);
+		UserEntity createUser = userService.createUser(userDto);
+		
+		log.info("user Service Called user is Created..." +createUser);
+		
+		return new ResponseEntity<>(createUser, HttpStatus.CREATED);
 	}
 
 	@PutMapping("/{id}")
 	public ResponseEntity<UserEntity> updateUser(@Valid @RequestBody UserDto userDto, @PathVariable Integer id) {
 		//ok
-		return new ResponseEntity<>(userService.updateUser(userDto, id), HttpStatus.ACCEPTED);
+		log.info("UserDto {} is .."+userDto);
+		
+		log.info("User Dto with Id.."+userDto.getId());
+		
+		UserEntity updateUser = userService.updateUser(userDto, id);
+		
+		log.info("User is updated...."+updateUser);
+		
+		return new ResponseEntity<>(updateUser, HttpStatus.ACCEPTED);
 	}
 
 	@GetMapping("/")
 	public ResponseEntity<List<UserEntity>> getAllListOfUsers() {
 		//ok
-		return new ResponseEntity<>(userService.getAllUserDetails(), HttpStatus.OK);
+		List<UserEntity> allUserDetails = userService.getAllUserDetails();
+		
+		log.info("All User details Called...");
+		log.info("ALl Users {} is recieved",allUserDetails);
+		
+		return new ResponseEntity<>(allUserDetails, HttpStatus.OK);
 	}
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<ApiResponse> deleteUser(@PathVariable Integer id) {
 		//ok
+		log.info("Delete User Service called {} ",id);
+		
 		userService.deleteUser(id);
+		
+		log.info("user is Deleted....");
 
 		return new ResponseEntity<>(new ApiResponse(AppConstants.MESSAGE), HttpStatus.OK);
 	}
@@ -58,31 +82,62 @@ public class UserController {
 	@GetMapping("/{id}")
 	public ResponseEntity<UserEntity> getUserById(@PathVariable Integer id) {
 		//ok
-		return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
+		UserEntity userById = userService.getUserById(id);
+		
+		log.info("User is Received by Id " +userById.getId());
+		log.info("User By id {} ",userById);
+		
+		return new ResponseEntity<>(userById, HttpStatus.OK);
 	}
 
 	@GetMapping("/name/{name}")
 	public ResponseEntity<UserEntity> getUserByName(@PathVariable String name) {
 		//ok
-		return new ResponseEntity<>(userService.getUserByName(name), HttpStatus.OK);
+		
+		UserEntity userByName = userService.getUserByName(name);
+		
+		log.info("User is Received By Name " +name);
+		log.info("User By Name {} ",userByName);
+		
+		return new ResponseEntity<>(userByName, HttpStatus.OK);
 	}
 
 	@GetMapping("/lastname/{name}")
 	public ResponseEntity<List<UserEntity>> getUserByLastName(@PathVariable(name = "name") String lastName) {
 		//ok
-		return new ResponseEntity<>(userService.getUserByLastName(lastName), HttpStatus.OK);
+		
+		List<UserEntity> userByLastName = userService.getUserByLastName(lastName);
+		
+		log.info("User is Received By LastName " +lastName);
+
+		log.info("User is Received By LastName {} ",userByLastName);
+		
+		return new ResponseEntity<>(userByLastName, HttpStatus.OK);
 	}
 
 	@GetMapping("/city/{city}")
 	public ResponseEntity<List<UserEntity>> getUserByCity(@PathVariable String city) {
 		//ok
-		return new ResponseEntity<>(userService.getUserByCity(city), HttpStatus.FOUND);
+		
+		List<UserEntity> userByCity = userService.getUserByCity(city);
+		
+		log.info("User is Received By City " +city);
+		
+		log.info("User is Received By City {} ",userByCity);
+		
+		return new ResponseEntity<>(userByCity, HttpStatus.FOUND);
 	}
 
 	@GetMapping("/state/{state}")
 	public ResponseEntity<List<UserEntity>> getUserByState(@PathVariable String state) {
 		//ok
-		return new ResponseEntity<>(userService.getUserByState(state), HttpStatus.FOUND);
+		List<UserEntity> userByState = userService.getUserByState(state);
+		
+		log.info("User is Received By State " +state);
+		
+		log.info("User is Received By State {} ",userByState);
+		
+		return new ResponseEntity<>(userByState, HttpStatus.FOUND);
 	}
 
 }

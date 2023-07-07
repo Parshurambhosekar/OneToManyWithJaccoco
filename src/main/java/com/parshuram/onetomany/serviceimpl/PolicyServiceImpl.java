@@ -4,6 +4,8 @@ import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,12 +26,16 @@ public class PolicyServiceImpl implements PolicyService {
 	@Autowired
 	private PolicyRepository policyRepository;
 	
+	private Logger logger=LoggerFactory.getLogger(PolicyServiceImpl.class);
+	
 	@Override
 	public PolicyEntity createPolicy(PolicyDto policyDto, Integer id) {
-
+		
 		var userEntity = userRepository.findById(id)
 				.orElseThrow(()->new ResourceNotFoundException(AppConstants.USER, AppConstants.USERID, id));
-	
+		
+		logger.info("UserEntity {} ",userEntity+"userId"+id);
+		
 		var random=new SecureRandom();
 		
 		var policyId = random.nextInt(1000, 80000);
@@ -43,6 +49,8 @@ public class PolicyServiceImpl implements PolicyService {
 		policyEntity.setStartDate(policyDto.getStartDate());
 		policyEntity.setMaxInsurance(policyDto.getMaxInsurance());
 		policyEntity.setMonthlyAmountDeduction(policyDto.getMonthlyAmountDeduction());
+
+		logger.info("Policy Entity Saved...{} ",policyEntity);
 		
 		return policyRepository.save(policyEntity);
 	}
@@ -52,9 +60,13 @@ public class PolicyServiceImpl implements PolicyService {
 
 		var userEntity = userRepository.findById(id)
 				.orElseThrow(()->new ResourceNotFoundException(AppConstants.USER, AppConstants.USERID, id));
-	
+
+		logger.info("UserEntity {} ",userEntity+"userId"+id);
+		
 		var policyEntity = policyRepository.findById(policyId)
 				.orElseThrow(()->new ResourceNotFoundException(AppConstants.POLICY, AppConstants.POLICYID, policyId));
+		
+		logger.info("PolicyEntity {} ",policyEntity+"policyId"+policyId);
 		
 		policyEntity.setPolicyName(policyDto.getPolicyName());
 		policyEntity.setMaxInsurance(policyDto.getMaxInsurance());
@@ -66,22 +78,34 @@ public class PolicyServiceImpl implements PolicyService {
 		policyEntity.setEndDate(startDate.plusYears(1));
 		policyEntity.setUserEntity(userEntity);
 		
+		logger.info("Updated Policy Entity {} ",policyEntity);
+		
 		return policyRepository.save(policyEntity);
 	}
 
 	@Override
 	public List<PolicyEntity> getAllPolicies() {
 		
-		return policyRepository.findAll();
+		List<PolicyEntity> policyList = policyRepository.findAll();
+		
+		logger.info("List of All Polices With User Details ",policyList);
+		
+		return policyList;
 	}
 
 	@Override
 	public void deletePolicy(Integer policyId) {
 
 		if (policyRepository.existsById(policyId)) {
+			
+			logger.info("Policy Details is found with id "+policyId);
+			
 			policyRepository.deleteById(policyId);
 		}
 		else {
+			
+			logger.info("Exception Thrown...");
+			
 			throw new ResourceNotFoundException(AppConstants.POLICY, AppConstants.POLICYID, policyId);
 		}
 		
@@ -89,8 +113,13 @@ public class PolicyServiceImpl implements PolicyService {
 	
 	@Override
 	public PolicyEntity getPolicyById(Integer policyId) {
-		return policyRepository.findById(policyId)
-						.orElseThrow(()->new ResourceNotFoundException(AppConstants.POLICY, AppConstants.POLICYID, policyId));
+		
+		PolicyEntity policyEntity = policyRepository.findById(policyId)
+					.orElseThrow(()->new ResourceNotFoundException(AppConstants.POLICY, AppConstants.POLICYID, policyId));
+		
+		logger.info("Policy details with id"+policyId+" {} ",policyEntity);
+		
+		return policyEntity;
 	}
 
 	@Override
@@ -98,9 +127,16 @@ public class PolicyServiceImpl implements PolicyService {
 
 		List<PolicyEntity> policyByName = policyRepository.getPolicyByName(policyName);
 		
+		logger.info("policy Found with name"+policyName);
+		
 		if (policyByName.isEmpty()) {
+			
+			logger.info("Exception Thrown....");
+			
 			throw new ResourceNotFoundException(AppConstants.POLICY,AppConstants.POLICYNAME, policyName);
 		}
+		
+		logger.info("Policy Details {} with Name ",policyByName);
 		
 		return policyByName;
 	}
@@ -110,9 +146,13 @@ public class PolicyServiceImpl implements PolicyService {
 
 		List<PolicyEntity> insurance = policyRepository.getByMaxInsurance(maxInsurance);
 		
+		logger.info("policy Found with Insurance"+maxInsurance);
+		
 		if (insurance.isEmpty()) {
 			throw new ResourceNotFoundException(AppConstants.POLICY,AppConstants.INSURANCE, maxInsurance); 
 		}
+	
+		logger.info("Policy Details {} with required Insurance Amount ",insurance);
 		
 		return insurance;
 	}
@@ -122,10 +162,17 @@ public class PolicyServiceImpl implements PolicyService {
 
 		List<PolicyEntity> amount = policyRepository.getPoliciesByDeductedAmount(monthlyAmount);
 		
+		logger.info("policy Found with Mothly deduction Amount"+monthlyAmount);
+		
 		if(amount.isEmpty()) {
+			
+			logger.info("Exception Thrown...");
+			
 			throw new ResourceNotFoundException(AppConstants.POLICY, AppConstants.AMOUNT, (double)monthlyAmount);
 		}
 			
+		logger.info("Policy Details {} with Mothly Deduction Amount",monthlyAmount);
+		
 		return amount;
 	}
 

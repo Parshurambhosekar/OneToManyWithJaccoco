@@ -59,6 +59,9 @@
 	</dependencies>
 
 	<build>
+		
+		<finalName>onetomany_docker_app</finalName>
+	
 		<plugins>
 			<plugin>
 				<groupId>org.jacoco</groupId>
